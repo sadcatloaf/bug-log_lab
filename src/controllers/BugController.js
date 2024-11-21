@@ -11,17 +11,37 @@ export class BugController extends BaseController {
             .get('', this.getAllBugs)
             .get('/:bugId', this.getBugById)
             .use(Auth0Provider.getAuthorizedUserInfo)
+            .put('/:bugId', this.editBug)
             .post('', this.createBug)
     }
+    async editBug(request, response, next) {
+        try {
+            const bugId = request.params.bugId
+            const updateData = request.body
+            const userInfo = request.userInfo
+            const updatedBug = await bugService.editBug(bugId, updateData, userInfo.id)
+            response.send(updatedBug)
+        } catch (error) {
+            next(error)
+        }
+    }
     async getBugById(request, response, next) {
-        const bugId = request.params.bugId
-        const bugs = await bugService.getBugById(bugId)
-        response.send(bugs)
+        try {
+            const bugId = request.params.bugId
+            const bugs = await bugService.getBugById(bugId)
+            response.send(bugs)
+        } catch (error) {
+            next(error)
+        }
     }
 
     async getAllBugs(request, response, next) {
-        const bugs = await bugService.getAllBugs()
-        response.send(bugs)
+        try {
+            const bugs = await bugService.getAllBugs()
+            response.send(bugs)
+        } catch (error) {
+            next(error)
+        }
     }
     async createBug(request, response, next) {
         try {

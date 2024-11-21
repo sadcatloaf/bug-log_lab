@@ -1,6 +1,19 @@
+import { Forbidden } from "@bcwdev/auth0provider/lib/Errors"
 import { dbContext } from "../db/DbContext"
 
 class BugService {
+    async editBug(bugId, updateData, userInfo) {
+        const originalBug = await dbContext.Bugs.findById(bugId)
+        if (!originalBug) { throw new Error(`NO BUGS FOR YOU, ${bugId}`) }
+        if (userInfo != originalBug.creatorId) {
+            throw new Forbidden('You cant update that you dont own it')
+        }
+        if (updateData.description) originalBug.description = updateData.description
+        originalBug.closed ??= updateData.closed
+        originalBug.title = updateData.title || originalBug.title
+        await originalBug.save()
+        return originalBug
+    }
     async getBugById(bugId) {
         const bugs = await dbContext.Bugs.findById(bugId).populate('creator')
         if (bugs == null) {
