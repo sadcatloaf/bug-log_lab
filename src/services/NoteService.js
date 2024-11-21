@@ -1,6 +1,14 @@
 import { dbContext } from "../db/DbContext"
 
 class NoteService {
+    async deleteNotes(noteId) {
+        const notes = await dbContext.Notes.findById(noteId)
+        if (notes == null) {
+            throw new Error(`Invalid note ID${noteId}`)
+        }
+        await notes.deleteOne()
+        return notes
+    }
     async getAllNotes(bugId) {
         const notes = await dbContext.Notes.find({ bugId: bugId })
         if (notes == null) {
