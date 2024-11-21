@@ -3,6 +3,7 @@ import BaseController from "../utils/BaseController";
 import { Auth0Provider } from "@bcwdev/auth0provider/lib/Auth0Provider";
 import { bugService } from "../services/BugService";
 import { get } from "mongoose";
+import { noteService } from "../services/NoteService";
 
 export class BugController extends BaseController {
     constructor() {
@@ -10,10 +11,20 @@ export class BugController extends BaseController {
         this.router
             .get('', this.getAllBugs)
             .get('/:bugId', this.getBugById)
+            .get('/:bugId/notes', this.getAllNotes)
             .use(Auth0Provider.getAuthorizedUserInfo)
             .delete('/:bugId', this.deleteBug)
             .put('/:bugId', this.editBug)
             .post('', this.createBug)
+    }
+    async getAllNotes(request, response, next) {
+        try {
+            const bugId = request.params.bugId
+            const notes = await noteService.getAllNotes(bugId)
+            response.send(notes)
+        } catch (error) {
+            next(error)
+        }
     }
     async deleteBug(request, response, next) {
         try {
