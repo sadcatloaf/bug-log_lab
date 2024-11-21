@@ -2,6 +2,14 @@ import { Forbidden } from "@bcwdev/auth0provider/lib/Errors"
 import { dbContext } from "../db/DbContext"
 
 class BugService {
+    async deleteBug(bugId) {
+        const bugs = await dbContext.Bugs.findById(bugId)
+        if (bugs == null) {
+            throw new Error(`Invalid bug ID${bugId}`)
+        }
+        await bugs.deleteOne()
+        return bugs
+    }
     async editBug(bugId, updateData, userInfo) {
         const originalBug = await dbContext.Bugs.findById(bugId)
         if (!originalBug) { throw new Error(`NO BUGS FOR YOU, ${bugId}`) }
