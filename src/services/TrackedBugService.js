@@ -1,6 +1,14 @@
 import { dbContext } from "../db/DbContext"
 
 class TrackedBugService {
+    async deleteTrackedBug(trackedBugId) {
+        const trackedBug = await dbContext.TrackedBugs.findById(trackedBugId)
+        if (trackedBug == null) {
+            throw new Error('wrong freaken bug brah')
+        }
+        await trackedBug.deleteOne()
+        return trackedBug
+    }
     async getMyTrackedBugs(userInfo) {
         const trackedBugs = await dbContext.TrackedBugs.find({ accountId: userInfo }).populate('bug')
         return trackedBugs
