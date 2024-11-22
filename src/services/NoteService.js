@@ -1,10 +1,14 @@
+import { Forbidden } from "@bcwdev/auth0provider/lib/Errors"
 import { dbContext } from "../db/DbContext"
 
 class NoteService {
-    async deleteNotes(noteId) {
+    async deleteNotes(noteId, updateBugData, userId) {
         const notes = await dbContext.Notes.findById(noteId)
         if (notes == null) {
             throw new Error(`Invalid note ID${noteId}`)
+        }
+        if (userId != notes.creatorId) {
+            throw new Forbidden('HAHA cant delete')
         }
         await notes.deleteOne()
         return notes

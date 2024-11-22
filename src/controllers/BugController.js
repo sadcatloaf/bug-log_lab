@@ -41,8 +41,9 @@ export class BugController extends BaseController {
     async deleteBug(request, response, next) {
         try {
             const bugId = request.params.bugId
-            // const userInfo = request.userInfo
-            const bug = await bugService.deleteBug(bugId)
+            const updateBugData = request.body
+            const userInfo = request.userInfo
+            const bug = await bugService.deleteBug(bugId, updateBugData, userInfo.id)
             response.send(bug)
         } catch (error) {
             next(error)

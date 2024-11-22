@@ -1,10 +1,14 @@
+import { Forbidden } from "@bcwdev/auth0provider/lib/Errors"
 import { dbContext } from "../db/DbContext"
 
 class TrackedBugService {
-    async deleteTrackedBug(trackedBugId) {
+    async deleteTrackedBug(trackedBugId, userId, updateBugData) {
         const trackedBug = await dbContext.TrackedBugs.findById(trackedBugId)
         if (trackedBug == null) {
             throw new Error('wrong freaken bug brah')
+        }
+        if (userId != trackedBug.accountId) {
+            throw new Forbidden('Oh well cant deletre again wow')
         }
         await trackedBug.deleteOne()
         return trackedBug

@@ -13,7 +13,9 @@ export class NoteController extends BaseController {
     async deleteNotes(request, response, next) {
         try {
             const noteId = request.params.noteId
-            const note = await noteService.deleteNotes(noteId)
+            const updateBugData = request.body
+            const userInfo = request.userInfo
+            const note = await noteService.deleteNotes(noteId, updateBugData, userInfo.id)
             response.send(note)
         } catch (error) {
             next(error)
