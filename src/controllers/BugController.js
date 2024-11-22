@@ -41,7 +41,7 @@ export class BugController extends BaseController {
             const bugId = request.params.bugId
             const updateData = request.body
             const userInfo = request.userInfo
-            const updatedBug = await bugService.editBug(bugId)
+            const updatedBug = await bugService.editBug(bugId, updateData, userInfo.id)
             response.send(updatedBug)
         } catch (error) {
             next(error)
