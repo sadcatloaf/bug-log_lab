@@ -4,6 +4,7 @@ import { Auth0Provider } from "@bcwdev/auth0provider/lib/Auth0Provider";
 import { bugService } from "../services/BugService";
 import { get } from "mongoose";
 import { noteService } from "../services/NoteService";
+import { trackedBugService } from "../services/TrackedBugService";
 
 export class BugController extends BaseController {
     constructor() {
@@ -13,10 +14,21 @@ export class BugController extends BaseController {
             .get('/:bugId', this.getBugById)
             .get('/:bugId/notes', this.getAllNotes)
             .use(Auth0Provider.getAuthorizedUserInfo)
+            .get('/:bugId/trackedbugs', this.getTrackedBugUser)
             .delete('/:bugId', this.deleteBug)
             .put('/:bugId', this.editBug)
             .post('', this.createBug)
     }
+    async getTrackedBugUser(request, response, next) {
+        try {
+            const bugId = request.params.bugId
+            const trackedBug = await trackedBugService.getTrackedBugUser(bugId)
+            response.send(trackedBug)
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async getAllNotes(request, response, next) {
         try {
             const bugId = request.params.bugId
